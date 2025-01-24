@@ -1,0 +1,192 @@
+---
+title: "QTM 6300: Assignment 3"
+author: "Maria Sanchez Otero"
+date: "September 16, 2024"
+format: html
+editor: source
+self-contained: true
+toc: true
+toc-expand: true
+toc-depth: 3
+---
+
+```{r}  setup, include=FALSE}
+rm(list = ls())
+knitr::opts_knit$set(root.dir = "/Users/mariasanchez/Documents/QTM6300")
+```
+
+# Context
+
+Babo Theatres offer semi-annual movie passes to customers who can watch unlimited movies in their theatres. They want you, the company’s data analyst, to evaluate this program to look for sales patterns. In particular, the theatre is interested in creating a model that predicts average sales each time the movie pass customer comes to watch a movie. The average sales variable (avg_spent) include spending for food and drinks. For this homework, you will need movie_sales.csv along with the data dictionary provided to you. Note that the data set contains information for 560 movie pass customers.
+
+For this assignment, please work in the R Markdown file provided. Submit the .Rmd file along with the resulting .HTML file. 
+
+# Questions
+
+## Question 1
+
+Import the data set movie_sales.csv into R. Name this data frame as "movies." 
+
+```{r}
+"movies" <- read.csv("movie_sales.csv")
+str(movies)
+```
+
+## Question 2
+
+Set the seed to 28 and separate the file randomly into 55% training and 45% test sets. You should end up with a training data frame called "training" and a testing data set called "test".
+
+```{r}
+set.seed(28)
+N <- nrow(movies)
+trainingSize  <- round(N*0.55)
+trainingCases <- sample(N, trainingSize)
+training <- movies[trainingCases,]
+test <- movies[-trainingCases,]
+
+```
+
+
+
+## Question 3
+
+How many observations/cases does the training set contain? How many observations/cases does the test set contain?
+
+Answer: The training set contains 308 observations and the test set contains 252 observations.
+
+
+## Question 4
+
+Using R, build a linear regression model with the lm() function where the dependent variable ("label" or "target") is the average amount spent (avg_spent) and the independent variables ("features") are number of movies watched (movies_watched), the dummy for ever having bought alcohol (ever_bought_alcohol), percent of total amount bought as drinks (perc_drinks), average movie rating of movies watched (movie_avg_rating), along with the drama, comedy and action dummy variables.
+
+```{r}
+model1 <- lm(avg_spent ~ movies_watched + ever_bought_alcohol + perc_drinks + movie_avg_rating + fav_category, data=training)
+summary(model1)
+
+options(scipen = 100)
+summary(model1)
+```
+
+## Question 5
+In your linear regression model, properly interpret the y-intercept.
+
+Answer: The y-intercept is the value of the dependent variable when all independent variables are zero, and it is 18.818027. It has three asterisks, indicating that it is highly significant for the model.
+
+## Question 6
+In your linear regression model, properly interpret the coefficient for movies watched.
+
+
+Answer: The coefficient for movies watched has two asterisks, meaning there is strong evidence that the number of movies watched has a meaningful impact on the average amount spent.
+
+## Question 7
+
+In your linear regression model, properly interpret the coefficient for ever_bought_alcohol. 
+
+Answer: This coefficient is highly significant, as indicated by the three asterisks, meaning there is strong evidence that having ever bought alcohol has a meaningful impact on the average amount spent.
+ 
+## Question 8
+
+In your linear regression model, which variable(s) have significant linear relationships with the dependent variable, avg_spent?
+
+Answer: The variables that have significant linear relationships with the dependent variable (avg_spent) are: Intercept, movies_watched, ever_bought_alcohol, and movie_avg_rating.
+
+## Question 9
+
+Use the step() function to use a stepwise function to automatically select the "best" model. You can use your first lm() model from as the starting point.
+
+
+```{r}
+model2 <- step(model1)
+summary(model2)
+```
+
+## Question 10
+
+In your stepwise model, what variables ended up staying the final model?
+
+Answer: 
+
+## Question 11
+
+In the resulting model from the stepwise model, how much, on average, does a customer spend per trip to the movie theatre if they have watched 10 movies, never bought alcohol, watched movies with an average rating of 87, and whose favorite category is comedy. You can either calculate the prediction using a calculator (and show work) or you can use R as a calculator.
+
+Answer: avg_spent = 18.734352 + (0.080149*10) + (2.601771*0) + (-0.134824*87)
+avg_spent = 18.734352+0.80149+0-11.725688 = 7.81
+
+## Question 12
+
+Using the test set, store the predictions from your second model in the "movies" data frame. Here, you want to do two things:
+
+* Store the predictions in a stand-alone object called "predictions"
+
+* Store the predictions in the test data frame.
+
+```{r}
+predictions <- predict(model2, test)
+test$predictions <- predict(model2, test)
+
+```
+
+
+## Question 13
+
+Calculate the MAPE using R code.
+
+```{r}
+observations <- test$avg_spent
+errors <- observations - predictions
+mape <- mean(abs(observations-predictions)/observations)
+mape
+```
+
+
+## Question 14
+
+In one sentence, interpret the MAPE.
+
+Answer: The MAPE is around 0.1826275, which means around 18.3% deviation between predictions and actual observed values on average.
+
+
+
+## Question 15
+
+Calculate the RMSE using R code.
+
+```{r}
+rmse <- sqrt(mean((observations-predictions)^2))
+rmse
+```
+
+
+## Question 16
+
+In one sentence, interpret the RMSE.
+
+Answer: It is around 2.32, and this means that if we use the model to predict the average money spent, we would be about $2.32 off on average.
+
+
+
+## Question 17
+
+With R code, calculate the naive benchmark using the mean as the prediction.
+
+Answer:
+
+
+```{r}
+errors_bench <- observations - mean(training$avg_spent)
+mape_bench <- mean(abs(errors_bench)/observations)
+mape_bench
+rmse_bench <- sqrt(mean(errors_bench^2))
+rmse_bench
+```
+
+## Question 18
+
+Is your model better than using the mean as the prediction? How do you know?
+
+Answer: Yes, because if we use the mean instead of the model to predict the average sales we would be about $3.62 off on average. If we use the model, we would be about $2.32 off on average.
+
+
+
+
