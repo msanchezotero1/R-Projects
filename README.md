@@ -4,26 +4,34 @@ This repository showcases my work in R for data analysis and visualization.
 
 ## Projects
 
-### 1. Babo Theatres Analysis
+### 1.Car Price Prediction: Regression and Trees
 
-**Objective:** Analyze movie pass customers' spending patterns at Babo Theatres.
+**Objective:** Predict the price of used cars (`Price`) using linear regression and decision tree models.
 
 **Files:**
-- `Assignment 3.qmd`: Quarto Markdown file for the analysis.
-- `Assignment 3.html`: Rendered HTML report with visualizations and insights.
-- `movie_sales.csv`: Dataset used for the analysis.
+- `CarPrice_Analysis.qmd`: Quarto Markdown file for the analysis.
+- `CarPrice_Analysis.html`: Rendered HTML report with visualizations and insights.
+- `ToyotaCorolla.csv`: Dataset used for the analysis.
 
 **Key Steps:**
-1. Data exploration and visualization.
-2. Development of a predictive model for `avg_spent`:
-   - **Dependent variable:** `avg_spent` (average amount spent by customers).
-   - **Independent variables:**
-     - `movies_watched`: Number of movies watched.
-     - `ever_bought_alcohol`: Dummy variable indicating if alcohol was ever purchased.
-     - `perc_drinks`: Percentage of total amount spent on drinks.
-     - `movie_avg_rating`: Average rating of movies watched.
-     - Genre dummies: `drama`, `comedy`, `action`.
-3. Insights and recommendations for improving customer spending.
+1. **Exploratory Data Analysis (EDA):**
+   - Summary statistics and visualizations of variables.
+   - Analysis of relationships between features and `Price`.
+
+2. **Model Building:**
+   - **Linear Regression:** Establishes a baseline using linear relationships.
+   - **Decision Tree:** Captures non-linear relationships and identifies important features.
+
+3. **Model Evaluation:**
+   - Comparison of metrics (e.g., RMSE, R²).
+   - Insights into the strengths and limitations of each model.
+
+**Key Insights:**
+- Linear regression offers a simple baseline but struggles with non-linear relationships.
+- Decision trees effectively identify key features impacting `Price`.
+
+**Tools Used:** R, Quarto, ggplot2, rpart.
+
 
 ## About
 
