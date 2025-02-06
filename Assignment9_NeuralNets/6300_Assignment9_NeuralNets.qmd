@@ -1,0 +1,176 @@
+---
+title: "Assignment 9: Neural Nets"
+author: "[Name]"
+date: "[Date]"
+format: html
+editor: source
+self-contained: true
+toc: true
+toc-expand: true
+toc-depth: 3
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_knit$set(root.dir = '/Users/mariasanchez/Documents/QTM6300')
+```
+
+# Context
+
+Let’s take a look at the data located in UniversalBank.csv. Each row represents a customer at small but rapidly growing bank. The columns measure all sorts of customer characteristics, ranging from their demographic information (e.g., Age, Family) to whether they currently have various accounts open with the bank (e.g., Securities Account, CD Account). For a complete description of the fields, consult the data page on Canvas.
+
+The bank is aggressively trying to convert customers from depositors into borrowers through its personal loan program. The column **Personal Loan** shows whether each customer responded to a direct marketing campaign related to this program. The marketing team is now trying to understand what types of customers responds to new personal loans marketing. If they can establish reasonably strong predictive power, they will deploy the model more widely across their customer base to identify promising leads and a more nuanced target market.
+
+
+# Task 1: Predicting Mortgage Amount
+
+## Question 1
+
+Do the following:
+
+* Import the data as "bank"
+
+* Remove any predictor that might be inappropriate for this activity.
+
+* Set the target to a factor.
+
+```{r}
+#install.packages("nnet")
+#install.packages("caret")
+#install.packages("NeuralNetTools")
+
+library(nnet)
+library(caret)
+library(NeuralNetTools)
+source("BabsonAnalytics.R")
+
+bank = read.csv('UniversalBank.csv')
+
+bank$ID = NULL
+bank$ZIP.Code = NULL
+
+bank$Personal.Loan <- as.factor(bank$Personal.Loan)
+
+```
+
+## Question 2
+
+* Given the fact that most activation functions are nonlinear, standardizing is an important step towards making sure no one variable swamps all of the others.
+
+Standardize all of the numeric inputs for this data set (e.g., using preProcess from the caret package). 
+
+Note: During class, we normalized our variable. This time, we want to standardize! We have done this in the past!
+
+To verify that this process has gone well, enter the maximum value of the standardized version of the Income variable below. Round your answer to two decimal places.
+
+Answer: 3.26
+
+```{r}
+library(caret)
+numeric_cols <- sapply(bank, is.numeric)  
+bank_numeric <- bank[, numeric_cols] 
+standardizer <- preProcess(bank_numeric, method = c("center", "scale"))
+bank[, numeric_cols] <- predict(standardizer, bank_numeric)
+bank$Personal.Loan <- as.factor(bank$Personal.Loan)
+
+
+```
+
+## Question 3
+
+Write a short sentence putting describing what the quantity you found in the previous question (Q3) means.
+
+Answer: 
+The maximum standardized value of Income, 3.26, means that the highest income in the dataset is 3.26 times the standard deviation above the average income. It shows how much higher the largest income is compared to the average, after adjusting for the spread of the data.
+
+## Question 4
+
+* Set a seed of 28 and partition a training set with 70% of the data.
+
+```{r}
+set.seed(28)
+N = nrow(bank)
+trainingSize = round(N*0.7)
+trainingCases = sample(N, trainingSize)
+train = bank[trainingCases,]
+test = bank[-trainingCases,]
+```
+
+
+
+
+
+## Question 5
+
+Build a neural net model with a hidden layer of size 4, and plot it using the plotnet function from the NeuralNetTools package. Notice how bad this default plotting is. Really, really subpar. Now plot with the fix (originally posted here: https://github.com/fawda123/NeuralNetTools/issues/20).
+
+par(mar = numeric(4))
+plotnet(model,pad_x = .5)
+
+What was the difference between the original and the fixed versions?
+
+Answer: The fixed plot is much cleaner and easier to interpret than the original.
+
+```{r}
+model = nnet(Personal.Loan ~ ., data=train, size = 4)
+plotnet(model)
+
+par(mar = numeric(4))
+plotnet(model,pad_x = .5)
+
+```
+
+
+## Question 6
+
+What can we learn about what types of customers accept personal loan offers by visualizing examining the neural net you've created? (i.e., what did we say in class from looking at this visual?)
+
+Answer: 
+The neural net provides a visual representation of how different customer characteristics influence the likelihood of accepting a personal loan.
+
+
+## Question 7
+
+Take a look at your confusion matrix. Also, calculate the error rate and benchmark error rate. How many predictions did you get correct from the model? What is the error rate associated with your model? Is this a useful model?
+
+Answer: 
+
+```{r}
+pred = predict(model, test, type="class")
+
+table(pred,test$Personal.Loan)
+
+# calculate error rate
+error_rate = sum(pred != test$Personal.Loan)/nrow(test)
+
+#calculate benchmark error rate
+error_bench = benchmarkErrorRate(train$Personal.Loan, test$Personal.Loan)
+```
+
+
+
+## Question 8
+
+One could make the argument that we care very much about predicting the True observations correctly in this model. What is sensitivity of this model? Round your answer to two decimal places, e.g., 0.12
+
+Also, how does this rate - essentially an accuracy rate - compare with the error rate you obtained previously? What is the issue with this if predicting True's accurately was really important to you in this context?
+
+Answer:
+Sensitivity: 0.87
+Sensitivity is much higher than the error rate, which reflects the overall performance.
+Issue: The model may not adequately prioritize predicting True customers, which could limit its effectiveness in identifying customers likely to accept the loan.
+
+```{r}
+
+```
+
+
+## Question 9
+
+What happens if you don't standardize? Turn off standardization and re-run your neural network(i.e., Just use hashtags to comment out a couple lines in your code and re-run everything). You will likely get an error if you try to compute the error rate, so just look at the misclassification table instead. What do you see? What you do think happened here?
+
+After you answer this question, just make sure to un-comment your lines of code before knitting.
+
+Answer: The model predicts that everyone will decline the loan (0), and it fails to predict any customers who accept the loan (1).
+Without standardizing, features with large numbers overshadow smaller features, which confuses the model, so it only predicts the majority class (0) and ignores the rest.
+
+
