@@ -4,37 +4,25 @@ This repository showcases my work in R for data analysis and visualization.
 
 ## Projects
 
-### 1.Car Price Prediction: Regression and Trees
+# R Projects Portfolio
 
-**Objective:** Predict the price of used cars (`Price`) using linear regression and decision tree models.
+This repository showcases my work in R for data analysis and visualization.
 
-**Files:**
-- `CarPrice_Analysis.qmd`: Quarto Markdown file for the analysis.
-- `CarPrice_Analysis.html`: Rendered HTML report with visualizations and insights.
-- `ToyotaCorolla.csv`: Dataset used for the analysis.
+## Projects
 
-**Key Steps:**
-1. **Exploratory Data Analysis (EDA):**
-   - Summary statistics and visualizations of variables.
-   - Analysis of relationships between features and `Price`.
+### 1. [Car Price Prediction: Regression and Trees](./CarPrice_Regression_Trees/)
+- Predict the price of used cars using linear regression and decision tree models.
+- Includes EDA, model building, and evaluation.
 
-2. **Model Building:**
-   - **Linear Regression:** Establishes a baseline using linear relationships.
-   - **Decision Tree:** Captures non-linear relationships and identifies important features.
+### 2. [Assignment 5: kNN Regression and Classification](./Assignment5_kNN/)
+- Explore k-Nearest Neighbors (kNN) for regression and classification tasks.
+- Includes performance evaluation and hyperparameter tuning.
 
-3. **Model Evaluation:**
-   - Comparison of metrics (e.g., RMSE, R²).
-   - Insights into the strengths and limitations of each model.
-
-**Key Insights:**
-- Linear regression offers a simple baseline but struggles with non-linear relationships.
-- Decision trees effectively identify key features impacting `Price`.
-
-**Tools Used:** R, Quarto, ggplot2, rpart.
+### 3. [Assignment 9: Neural Networks](./Assignment9_NeuralNets/)
+- Explore the use of neural networks for predictive modeling.
+- Includes data preparation, model building, and insights.
 
 
-## About
 
-This portfolio contains assignments and projects completed in R as part of my journey in data analytics.
 
 
